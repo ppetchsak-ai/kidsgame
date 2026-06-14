@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>ABC Vehicle Adventure Pro</title>
+  <meta name="description" content="ABC Vehicle Adventure เกมฝึกฟังคำศัพท์ยานพาหนะ A-X สำหรับเด็ก">
+  <meta name="theme-color" content="#73d7ff">
+  <link rel="manifest" href="manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -308,7 +311,7 @@
 
         <div class="tiny">
           ใส่รูปจาก Google Drive ได้ที่ตัวแปร <b>VEHICLES</b> ช่อง <b>image:</b><br>
-          URL: <code>https://drive.google.com/uc?export=view&id=FILE_ID</code>
+          GitHub: <code>assets/A_airplane.webp</code>
         </div>
       </div>
     </section>
@@ -317,7 +320,7 @@
   <div id="win" class="win">
     <div class="modal-card">
       <h2>🎉 You Win!</h2>
-      <p style="font-weight:900;font-size:20px">สะสมยานพาหนะครบ 24 ภาพแล้ว</p>
+      <p style="font-weight:900;font-size:20px">สะสมยานพาหนะครบทุกภาพแล้ว</p>
       <p>เก่งมาก! คุณคือ 👑 Vehicle Master</p>
       <button class="success" onclick="resetGame()">เล่นอีกครั้ง</button>
     </div>
@@ -334,30 +337,41 @@
 
 <script>
 const VEHICLES = [
-  {letter:'A', word:'Airplane', thai:'เครื่องบิน', place:'Airport', image:'https://placehold.co/600x420/8ee7ff/08345c?text=A+Airplane'},
-  {letter:'B', word:'Bus', thai:'รถบัส', place:'Bus Stop', image:'https://placehold.co/600x420/ffe484/4c3100?text=B+Bus'},
-  {letter:'C', word:'Car', thai:'รถยนต์', place:'City', image:'https://placehold.co/600x420/ff9d9d/5a0000?text=C+Car'},
-  {letter:'D', word:'Dump Truck', thai:'รถบรรทุกดัมพ์', place:'Dirt Land', image:'https://placehold.co/600x420/b6ffa8/124700?text=D+Dump+Truck'},
-  {letter:'E', word:'Excavator', thai:'รถขุด', place:'Earth Site', image:'https://placehold.co/600x420/ffd16b/4c2b00?text=E+Excavator'},
-  {letter:'F', word:'Fire Truck', thai:'รถดับเพลิง', place:'Fire Base', image:'https://placehold.co/600x420/ff7777/5c0000?text=F+Fire+Truck'},
-  {letter:'G', word:'Garbage Truck', thai:'รถเก็บขยะ', place:'Green Park', image:'https://placehold.co/600x420/85ef9c/06451b?text=G+Garbage+Truck'},
-  {letter:'H', word:'Helicopter', thai:'เฮลิคอปเตอร์', place:'Heli Pad', image:'https://placehold.co/600x420/a7d8ff/00345c?text=H+Helicopter'},
-  {letter:'I', word:'Ice Cream Truck', thai:'รถขายไอศกรีม', place:'Ice Cream', image:'https://placehold.co/600x420/ffc3dd/5c0030?text=I+Ice+Cream+Truck'},
-  {letter:'J', word:'Jeep', thai:'รถจี๊ป', place:'Jungle', image:'https://placehold.co/600x420/b5d68a/253b00?text=J+Jeep'},
-  {letter:'K', word:'Kayak', thai:'เรือคายัค', place:'Kayak Lake', image:'https://placehold.co/600x420/78d9ff/00344a?text=K+Kayak'},
-  {letter:'L', word:'Locomotive', thai:'รถจักรไอน้ำ', place:'Rail Land', image:'https://placehold.co/600x420/cfcfcf/222222?text=L+Locomotive'},
-  {letter:'M', word:'Motorcycle', thai:'รถจักรยานยนต์', place:'Moto Road', image:'https://placehold.co/600x420/caa4ff/2d005c?text=M+Motorcycle'},
-  {letter:'N', word:'Navy Ship', thai:'เรือรบ', place:'Navy Sea', image:'https://placehold.co/600x420/9fc5e8/0d2f52?text=N+Navy+Ship'},
-  {letter:'O', word:'Off-road Vehicle', thai:'รถออฟโรด', place:'Off-road', image:'https://placehold.co/600x420/9fcf79/183700?text=O+Off-road'},
-  {letter:'P', word:'Police Car', thai:'รถตำรวจ', place:'Police Town', image:'https://placehold.co/600x420/bad8ff/002a66?text=P+Police+Car'},
-  {letter:'Q', word:'Quad Bike', thai:'รถเอทีวี', place:'Quad Zone', image:'https://placehold.co/600x420/ff9696/5c0000?text=Q+Quad+Bike'},
-  {letter:'R', word:'Rocket', thai:'จรวด', place:'Rocket Base', image:'https://placehold.co/600x420/1f3b8f/ffffff?text=R+Rocket'},
-  {letter:'S', word:'Sailboat', thai:'เรือใบ', place:'Sunny Sea', image:'https://placehold.co/600x420/7ed6ff/003a56?text=S+Sailboat'},
-  {letter:'T', word:'Train', thai:'รถไฟ', place:'Train Town', image:'https://placehold.co/600x420/ffd766/4a2c00?text=T+Train'},
-  {letter:'U', word:'Unicycle', thai:'รถล้อเดียว', place:'Uni Park', image:'https://placehold.co/600x420/c19cff/32005c?text=U+Unicycle'},
-  {letter:'V', word:'Van', thai:'รถตู้', place:'Van Valley', image:'https://placehold.co/600x420/e8e8e8/333333?text=V+Van'},
-  {letter:'W', word:'Water Taxi', thai:'เรือแท็กซี่น้ำ', place:'Water Way', image:'https://placehold.co/600x420/ffda56/4d3500?text=W+Water+Taxi'},
-  {letter:'X', word:'X-copter Drone', thai:'โดรน', place:'X Sky', image:'https://placehold.co/600x420/c9fff8/004b44?text=X+Drone'}
+  {letter:'A', word:'Airplane', thai:'เครื่องบิน', place:'Airport', files:['A_airplane.webp']},
+  {letter:'B', word:'Bus', thai:'รถบัส', place:'Bus Stop', files:['B_bus.webp']},
+  {letter:'C', word:'Car', thai:'รถยนต์', place:'City', files:['C_car.webp']},
+  {letter:'D', word:'Dump Truck', thai:'รถบรรทุกดัมพ์', place:'Dirt Land',
+    files:['D_dump truck.webp','D_dumptruck.webp']},
+  {letter:'E', word:'Excavator', thai:'รถขุด', place:'Earth Site', files:['E_excavator.webp']},
+  {letter:'F', word:'Fire Truck', thai:'รถดับเพลิง', place:'Fire Base',
+    files:['F_fire truck.webp','F_firetruck.webp']},
+  {letter:'G', word:'Garbage Truck', thai:'รถเก็บขยะ', place:'Green Park',
+    files:['G_garbage truck.webp','G_garbagetruck.webp']},
+  {letter:'H', word:'Helicopter', thai:'เฮลิคอปเตอร์', place:'Heli Pad',
+    files:['H_helicoptor.webp','H_helicopter.webp']},
+  {letter:'I', word:'Ice Cream Truck', thai:'รถขายไอศกรีม', place:'Ice Cream',
+    files:['I_icecream truck.webp','I_icecreamtruck.webp','I_ice cream truck.webp']},
+  {letter:'J', word:'Jeep', thai:'รถจี๊ป', place:'Jungle', files:['J_jeep.webp']},
+  {letter:'K', word:'Kayak', thai:'เรือคายัค', place:'Kayak Lake', files:['K_kayak.webp']},
+  {letter:'L', word:'Locomotive', thai:'รถจักรไอน้ำ', place:'Rail Land', files:['L_locomotive.webp']},
+  {letter:'M', word:'Motorcycle', thai:'รถจักรยานยนต์', place:'Moto Road', files:['M_motorcycle.webp']},
+  {letter:'N', word:'Navy Ship', thai:'เรือรบ', place:'Navy Sea',
+    files:['N_navy ship.webp','N_navyship.webp']},
+  {letter:'O', word:'Ocean Liner', thai:'เรือเดินสมุทร', place:'Ocean',
+    files:['O_ocean liner.webp','O_oceanliner.webp','O_offroad.webp']},
+  {letter:'P', word:'Police Car', thai:'รถตำรวจ', place:'Police Town',
+    files:['P_police car.webp','P_policecar.webp']},
+  {letter:'Q', word:'Quad Bike', thai:'รถเอทีวี', place:'Quad Zone',
+    files:['Q_quad bike.webp','Q_quadbike.webp']},
+  {letter:'R', word:'Rocket', thai:'จรวด', place:'Rocket Base', files:['R_rocket.webp']},
+  {letter:'S', word:'Sailboat', thai:'เรือใบ', place:'Sunny Sea', files:['S_sailboat.webp']},
+  {letter:'T', word:'Train', thai:'รถไฟ', place:'Train Town', files:['T_train.webp']},
+  {letter:'U', word:'Unicycle', thai:'รถล้อเดียว', place:'Uni Park', files:['U_unicycle.webp']},
+  {letter:'V', word:'Van', thai:'รถตู้', place:'Van Valley', files:['V_van.webp']},
+  {letter:'W', word:'Water Taxi', thai:'เรือแท็กซี่น้ำ', place:'Water Way',
+    files:['W_water taxi.webp','W_watertaxi.webp']},
+  {letter:'X', word:'X-copter Drone', thai:'โดรน', place:'X Sky',
+    files:['X_x-copter drone.webp','X_copter drone.webp','X_drone.webp']}
 ];
 
 const STICKERS = ['🚗 Super Car','🚁 Sky Hero','🚂 Happy Train','🚀 Rocket Star','🚌 Magic Bus','⛵ Sea Captain','🏎️ Speed Racer','🚒 Fire Helper'];
@@ -365,6 +379,47 @@ let state = JSON.parse(localStorage.getItem('abc_adventure_pro') || '{"collected
 let current = null;
 let mode = 'quiz';
 let locked = false;
+
+function placeholder(v){
+  return 'https://placehold.co/600x420/dff8ff/213a62?text=' +
+    encodeURIComponent(v.letter + ' ' + v.word);
+}
+
+function imageCandidates(v){
+  const folders = ['assets', 'Assets', ''];
+  const results = [];
+
+  folders.forEach(folder => {
+    (v.files || []).forEach(file => {
+      results.push(folder ? `${folder}/${file}` : file);
+    });
+  });
+
+  return results;
+}
+
+function createVehicleImage(v){
+  const img = document.createElement('img');
+  img.alt = v.word;
+  img.loading = 'lazy';
+
+  const candidates = imageCandidates(v);
+  let index = 0;
+
+  function loadNext(){
+    if(index < candidates.length){
+      img.src = encodeURI(candidates[index]);
+      index += 1;
+    }else{
+      img.onerror = null;
+      img.src = placeholder(v);
+    }
+  }
+
+  img.onerror = loadNext;
+  loadNext();
+  return img;
+}
 
 const $ = id => document.getElementById(id);
 const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
@@ -384,13 +439,31 @@ function setMode(m){
 function renderMap(){
   const grid = $('roadGrid');
   grid.innerHTML = '';
+
   VEHICLES.forEach(v=>{
     const done = !!state.collected[v.letter];
     const node = document.createElement('div');
     node.className = 'node ' + (done ? 'done' : '');
-    node.innerHTML = `<div class="abc">${v.letter}</div>` + 
-      (done ? `<img src="${v.image}" alt="${v.word}">` : `<div class="unknown">?</div>`) +
-      `<div class="place">${v.place}</div>`;
+
+    const abc = document.createElement('div');
+    abc.className = 'abc';
+    abc.textContent = v.letter;
+    node.appendChild(abc);
+
+    if(done){
+      node.appendChild(createVehicleImage(v));
+    }else{
+      const unknown = document.createElement('div');
+      unknown.className = 'unknown';
+      unknown.textContent = '?';
+      node.appendChild(unknown);
+    }
+
+    const place = document.createElement('div');
+    place.className = 'place';
+    place.textContent = v.place;
+    node.appendChild(place);
+
     grid.appendChild(node);
   });
 }
@@ -436,11 +509,19 @@ function renderChoices(){
   const choices = shuffle([current, ...wrong]);
   const wrap = $('choices');
   wrap.innerHTML = '';
+
   choices.forEach(v=>{
     const card = document.createElement('div');
     card.className = 'choice';
     card.onclick = () => choose(card, v);
-    card.innerHTML = `<img src="${v.image}" alt="${v.word}"><div class="choice-name">${v.word}</div>`;
+
+    card.appendChild(createVehicleImage(v));
+
+    const label = document.createElement('div');
+    label.className = 'choice-name';
+    label.textContent = v.word;
+    card.appendChild(label);
+
     wrap.appendChild(card);
   });
 }
@@ -450,12 +531,20 @@ function renderRunner(){
   const choices = shuffle([current, ...wrong]);
   const wrap = $('runner');
   wrap.innerHTML = '';
+
   choices.forEach((v,i)=>{
     const card = document.createElement('div');
     card.className = `run-card lane${i+1}`;
     card.style.animationDelay = (i * 0.85) + 's';
     card.onclick = () => choose(card, v);
-    card.innerHTML = `<img src="${v.image}" alt="${v.word}"><div class="choice-name">${v.word}</div>`;
+
+    card.appendChild(createVehicleImage(v));
+
+    const label = document.createElement('div');
+    label.className = 'choice-name';
+    label.textContent = v.word;
+    card.appendChild(label);
+
     wrap.appendChild(card);
   });
 }
@@ -553,6 +642,10 @@ function resetGame(){
   renderMap();
   updateStats();
   newRound();
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js?v=2').catch(() => {});
 }
 
 init();
