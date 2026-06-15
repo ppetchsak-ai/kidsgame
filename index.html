@@ -203,6 +203,290 @@
     .run-card .choice-name{font-size:15px;padding:5px}
     .lane1{top:70px}.lane2{top:155px}.lane3{top:235px}.lane4{top:20px}
     @keyframes drive{from{left:105%}to{left:-40%}}
+
+    /* ===== Matching Game: จับคู่ตัวอักษรกับภาพ ===== */
+    .match-game{
+      display:none;
+      margin-top:16px;
+      padding:16px;
+      border-radius:30px;
+      border:5px solid #fff;
+      background:
+        radial-gradient(circle at 10% 12%,rgba(255,255,255,.65) 0 28px,transparent 30px),
+        linear-gradient(180deg,#edfaff,#fff8d6);
+      box-shadow:
+        0 8px 0 rgba(69,183,255,.20),
+        0 16px 26px rgba(53,112,145,.12);
+      overflow:hidden;
+    }
+
+    .match-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:14px;
+      padding:0 4px;
+      color:#3375a6;
+      font-weight:900;
+    }
+
+    .match-progress{
+      padding:8px 13px;
+      border-radius:999px;
+      background:#fff;
+      border:3px solid #fff;
+      box-shadow:0 4px 0 rgba(255,173,59,.25);
+      color:#ff7048;
+      white-space:nowrap;
+    }
+
+    /*
+      โครงสร้าง 2 คอลัมน์
+      - ซ้าย: ตัวอักษร
+      - กลาง: ช่องว่างสำหรับเส้น
+      - ขวา: ภาพขนาดเล็กลง
+    */
+    .match-board{
+      --match-row-height:164px;
+      --letter-tile-size:98px;
+      --image-tile-size:142px;
+      --line-corridor:96px;
+
+      position:relative;
+      display:grid;
+      grid-template-columns:
+        var(--letter-tile-size)
+        var(--image-tile-size);
+      column-gap:var(--line-corridor);
+      justify-content:center;
+      align-items:start;
+      padding:10px 8px 14px;
+      isolation:isolate;
+    }
+
+    .match-lines{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      pointer-events:none;
+      overflow:visible;
+      z-index:5;
+    }
+
+    .match-column{
+      position:relative;
+      z-index:2;
+      display:grid;
+      grid-template-rows:repeat(4,var(--match-row-height));
+      gap:16px;
+      align-items:center;
+    }
+
+    .letter-tile,
+    .image-tile{
+      position:relative;
+      justify-self:center;
+      align-self:center;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-width:0;
+      padding:0;
+      border:5px solid #fff;
+      background:#fff;
+      cursor:pointer;
+      user-select:none;
+      transition:
+        transform .16s ease,
+        box-shadow .16s ease,
+        outline .16s ease,
+        opacity .16s ease;
+      z-index:2;
+    }
+
+    .letter-tile{
+      width:var(--letter-tile-size);
+      height:var(--letter-tile-size);
+      border-radius:30px;
+      font-family:'Fredoka','Prompt',sans-serif;
+      font-size:58px;
+      font-weight:900;
+      color:#2861f4;
+      background:linear-gradient(180deg,#fff,#ccefff);
+      text-shadow:0 3px 0 #fff;
+      box-shadow:
+        0 7px 0 #9dddf6,
+        0 13px 21px rgba(53,112,145,.14);
+    }
+
+    .letter-tile:nth-child(2n){
+      color:#ff6aa9;
+      background:linear-gradient(180deg,#fff,#ffe1f0);
+      box-shadow:
+        0 7px 0 #f6bdd9,
+        0 13px 21px rgba(53,112,145,.14);
+    }
+
+    .image-tile{
+      width:var(--image-tile-size);
+      height:var(--image-tile-size);
+      border-radius:28px;
+      overflow:hidden;
+      background:
+        linear-gradient(180deg,#f4fcff,#d8f4ff);
+      box-shadow:
+        0 7px 0 #a7dff4,
+        0 13px 21px rgba(53,112,145,.14);
+    }
+
+    .image-tile img{
+      display:block;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position:center;
+      background:#dff8ff;
+    }
+
+    /* จุดเชื่อมภายในขอบการ์ด */
+    .letter-tile::after,
+    .image-tile::before{
+      content:"";
+      position:absolute;
+      top:50%;
+      width:14px;
+      height:14px;
+      border-radius:50%;
+      background:#7ccff0;
+      border:4px solid #fff;
+      box-shadow:0 2px 0 rgba(48,123,157,.18);
+      transform:translateY(-50%);
+      z-index:7;
+    }
+
+    .letter-tile::after{right:-10px}
+    .image-tile::before{left:-10px}
+
+    .letter-tile:hover,
+    .image-tile:hover{
+      transform:translateY(-3px);
+    }
+
+    .letter-tile.selected,
+    .image-tile.selected{
+      outline:7px solid var(--yellow);
+      box-shadow:
+        0 0 0 4px rgba(255,216,77,.24),
+        0 8px 0 #eaae35,
+        0 15px 25px rgba(53,112,145,.18);
+    }
+
+    .letter-tile.selected::after,
+    .image-tile.selected::before{
+      background:#ffc833;
+    }
+
+    .letter-tile.matched,
+    .image-tile.matched{
+      outline:7px solid var(--green);
+      opacity:.82;
+      cursor:default;
+      animation:matchPop .38s ease;
+    }
+
+    .letter-tile.matched::after,
+    .image-tile.matched::before{
+      background:#36c86b;
+    }
+
+    .letter-tile.wrong,
+    .image-tile.wrong{
+      outline:7px solid var(--red);
+      animation:shake .32s ease;
+    }
+
+    .letter-tile.wrong::after,
+    .image-tile.wrong::before{
+      background:#ff4f5e;
+    }
+
+    .match-check{
+      position:absolute;
+      right:7px;
+      bottom:7px;
+      width:32px;
+      height:32px;
+      border-radius:50%;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:var(--green);
+      color:#fff;
+      border:3px solid #fff;
+      font-weight:900;
+      box-shadow:0 3px 0 #2ea957;
+      z-index:8;
+    }
+
+    .matched .match-check{display:flex}
+
+    @keyframes matchPop{
+      50%{transform:scale(1.05)}
+    }
+
+    @media(max-width:560px){
+      .match-game{
+        padding:10px 8px 14px;
+        border-radius:24px;
+      }
+
+      .match-board{
+        --match-row-height:136px;
+        --letter-tile-size:82px;
+        --image-tile-size:116px;
+        --line-corridor:54px;
+
+        padding:8px 2px 12px;
+      }
+
+      .match-column{
+        gap:12px;
+      }
+
+      .letter-tile{
+        border-width:4px;
+        border-radius:23px;
+        font-size:47px;
+      }
+
+      .image-tile{
+        border-width:4px;
+        border-radius:22px;
+      }
+
+      .letter-tile::after,
+      .image-tile::before{
+        width:12px;
+        height:12px;
+        border-width:3px;
+      }
+
+      .letter-tile::after{right:-8px}
+      .image-tile::before{left:-8px}
+
+      .match-head{
+        font-size:14px;
+        margin-bottom:10px;
+      }
+
+      .match-progress{
+        padding:6px 10px;
+      }
+    }
+
     .feedback{
       min-height:38px;margin-top:10px;font-size:24px;text-align:center;
       font-family:'Fredoka','Prompt',sans-serif;font-weight:800;color:#ff70b8;text-shadow:0 3px 0 #fff;
@@ -317,6 +601,7 @@
         <div class="mode-tabs">
           <button class="tab active" id="quizTab" onclick="setMode('quiz')">🧩 Card Quiz</button>
           <button class="tab" id="runTab" onclick="setMode('runner')">🚦 Tap The Vehicle</button>
+          <button class="tab" id="matchTab" onclick="setMode('match')">🔤 จับคู่ภาพ</button>
         </div>
 
         <div class="question-card">
@@ -332,6 +617,14 @@
 
         <div id="choices" class="choices"></div>
         <div id="runner" class="runner"></div>
+        <div id="matchGame" class="match-game">
+          <div class="match-head"><span>เลือกตัวอักษรทางซ้าย แล้วเลือกภาพทางขวา</span><span id="matchProgress" class="match-progress">0 / 4 คู่</span></div>
+          <div id="matchBoard" class="match-board">
+            <svg id="matchLines" class="match-lines" aria-hidden="true"></svg>
+            <div id="matchLetters" class="match-column" aria-label="ตัวอักษรด้านซ้าย"></div>
+            <div id="matchImages" class="match-column" aria-label="ภาพยานพาหนะด้านขวา"></div>
+          </div>
+        </div>
         <div id="feedback" class="feedback"></div>
       </div>
 
@@ -434,6 +727,12 @@ let state = JSON.parse(localStorage.getItem('abc_adventure_pro') || '{"collected
 let current = null;
 let mode = 'quiz';
 let locked = false;
+let matchRound = [];
+let selectedLetterTile = null;
+let selectedImageTile = null;
+let matchedInRound = 0;
+let matchChecking = false;
+let matchConnections = [];
 
 function placeholder(v){
   return 'https://placehold.co/600x420/dff8ff/213a62?text=' +
@@ -486,8 +785,10 @@ function setMode(m){
   mode = m;
   $('quizTab').classList.toggle('active', mode === 'quiz');
   $('runTab').classList.toggle('active', mode === 'runner');
+  $('matchTab').classList.toggle('active', mode === 'match');
   $('choices').style.display = mode === 'quiz' ? 'grid' : 'none';
   $('runner').style.display = mode === 'runner' ? 'block' : 'none';
+  $('matchGame').style.display = mode === 'match' ? 'block' : 'none';
   newRound();
 }
 
@@ -547,7 +848,18 @@ function updateStats(){
 
 function newRound(){
   locked = false;
+  matchChecking = false;
   $('feedback').textContent = '';
+  if(mode === 'match'){
+    current = null;
+    $('letterBadge').textContent = 'A↔';
+    $('question').textContent = 'Match the letters!';
+    $('thaiHint').textContent = 'จับคู่ตัวอักษรกับภาพยานพาหนะ';
+    $('speech').textContent = 'Match each letter with the correct vehicle.';
+    renderMatchingGame();
+    setTimeout(speakQuestion, 300);
+    return;
+  }
   const remaining = VEHICLES.filter(v => !state.collected[v.letter]);
   current = remaining.length ? remaining[Math.floor(Math.random()*remaining.length)] : VEHICLES[Math.floor(Math.random()*VEHICLES.length)];
   $('letterBadge').textContent = current.letter;
@@ -604,7 +916,371 @@ function renderRunner(){
   });
 }
 
+
+function pickMatchingItems(){
+  const remaining = shuffle(VEHICLES.filter(v => !state.collected[v.letter]));
+  const selected = remaining.slice(0,4);
+  if(selected.length < 4){
+    const used = new Set(selected.map(v => v.letter));
+    const fillers = shuffle(VEHICLES.filter(v => !used.has(v.letter)));
+    selected.push(...fillers.slice(0,4-selected.length));
+  }
+  return selected;
+}
+
+function renderMatchingGame(){
+  matchRound = pickMatchingItems();
+  matchedInRound = 0;
+  selectedLetterTile = null;
+  selectedImageTile = null;
+  matchChecking = false;
+  matchConnections = [];
+
+  $('matchProgress').textContent = `0 / ${matchRound.length} คู่`;
+  $('matchLines').innerHTML = '';
+
+  const lettersWrap = $('matchLetters');
+  const imagesWrap = $('matchImages');
+  lettersWrap.innerHTML = '';
+  imagesWrap.innerHTML = '';
+
+  shuffle(matchRound).forEach(v => {
+    const tile = document.createElement('button');
+    tile.type = 'button';
+    tile.className = 'letter-tile';
+    tile.dataset.letter = v.letter;
+    tile.setAttribute('aria-label', `ตัวอักษร ${v.letter}`);
+    tile.innerHTML = `<span>${v.letter}</span><span class="match-check">✓</span>`;
+    tile.onclick = () => selectMatchLetter(tile, v);
+    lettersWrap.appendChild(tile);
+  });
+
+  shuffle(matchRound).forEach(v => {
+    const tile = document.createElement('button');
+    tile.type = 'button';
+    tile.className = 'image-tile';
+    tile.dataset.letter = v.letter;
+    tile.setAttribute('aria-label', v.word);
+
+    tile.appendChild(createVehicleImage(v));
+
+    const check = document.createElement('span');
+    check.className = 'match-check';
+    check.textContent = '✓';
+    tile.appendChild(check);
+
+    tile.onclick = () => selectMatchImage(tile, v);
+    imagesWrap.appendChild(tile);
+  });
+
+  requestAnimationFrame(() => {
+    syncMatchSvgSize();
+    redrawMatchedConnections();
+  });
+
+  setTimeout(() => {
+    syncMatchSvgSize();
+    redrawMatchedConnections();
+  }, 120);
+}
+
+function selectMatchLetter(tile, vehicle){
+  if(matchChecking || tile.classList.contains('matched')) return;
+
+  document.querySelectorAll('.letter-tile.selected').forEach(el => {
+    el.classList.remove('selected');
+  });
+
+  selectedLetterTile = tile;
+  tile.classList.add('selected');
+  $('feedback').textContent = `เลือกภาพทางขวาที่ตรงกับตัว ${vehicle.letter}`;
+  speak(`Letter ${vehicle.letter}`);
+  checkMatchingPair();
+}
+
+function selectMatchImage(tile, vehicle){
+  if(matchChecking || tile.classList.contains('matched')) return;
+
+  document.querySelectorAll('.image-tile.selected').forEach(el => {
+    el.classList.remove('selected');
+  });
+
+  selectedImageTile = tile;
+  tile.classList.add('selected');
+
+  if(!selectedLetterTile){
+    $('feedback').textContent = 'เลือกตัวอักษรทางซ้ายก่อน';
+  }
+
+  speak(vehicle.word);
+  checkMatchingPair();
+}
+
+function makeSvgElement(name, attrs = {}){
+  const el = document.createElementNS('http://www.w3.org/2000/svg', name);
+
+  Object.entries(attrs).forEach(([key, value]) => {
+    el.setAttribute(key, String(value));
+  });
+
+  return el;
+}
+
+function syncMatchSvgSize(){
+  const board = $('matchBoard');
+  const svg = $('matchLines');
+
+  if(!board || !svg) return null;
+
+  const rect = board.getBoundingClientRect();
+  const width = Math.max(1, rect.width);
+  const height = Math.max(1, rect.height);
+
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  svg.setAttribute('width', width);
+  svg.setAttribute('height', height);
+  svg.style.width = `${width}px`;
+  svg.style.height = `${height}px`;
+
+  return rect;
+}
+
+function getConnectionPoints(letterTile, imageTile){
+  const boardRect = syncMatchSvgSize();
+  const letterRect = letterTile.getBoundingClientRect();
+  const imageRect = imageTile.getBoundingClientRect();
+
+  if(!boardRect){
+    return {x1:0, y1:0, x2:0, y2:0};
+  }
+
+  /*
+    เริ่มและจบเส้นห่างจากขอบการ์ดเล็กน้อย
+    เพื่อให้เส้นอยู่ในช่องกลางและไม่ติดกับภาพ
+  */
+  return {
+    x1: letterRect.right - boardRect.left + 12,
+    y1: letterRect.top + letterRect.height / 2 - boardRect.top,
+    x2: imageRect.left - boardRect.left - 12,
+    y2: imageRect.top + imageRect.height / 2 - boardRect.top
+  };
+}
+
+function drawMatchConnection(letterTile, imageTile, color, id){
+  const svg = $('matchLines');
+
+  if(!svg || !letterTile || !imageTile) return null;
+
+  syncMatchSvgSize();
+  const points = getConnectionPoints(letterTile, imageTile);
+  const middleX = (points.x1 + points.x2) / 2;
+
+  const pathData =
+    `M ${points.x1} ${points.y1} ` +
+    `C ${middleX} ${points.y1}, ${middleX} ${points.y2}, ${points.x2} ${points.y2}`;
+
+  const group = makeSvgElement('g', {id});
+
+  const outline = makeSvgElement('path', {
+    d:pathData,
+    fill:'none',
+    stroke:'#ffffff',
+    'stroke-width':12,
+    'stroke-linecap':'round',
+    'stroke-linejoin':'round',
+    opacity:.95
+  });
+
+  const line = makeSvgElement('path', {
+    d:pathData,
+    fill:'none',
+    stroke:color,
+    'stroke-width':7,
+    'stroke-linecap':'round',
+    'stroke-linejoin':'round'
+  });
+
+  const startDot = makeSvgElement('circle', {
+    cx:points.x1,
+    cy:points.y1,
+    r:7,
+    fill:color,
+    stroke:'#ffffff',
+    'stroke-width':3
+  });
+
+  const endDot = makeSvgElement('circle', {
+    cx:points.x2,
+    cy:points.y2,
+    r:7,
+    fill:color,
+    stroke:'#ffffff',
+    'stroke-width':3
+  });
+
+  group.appendChild(outline);
+  group.appendChild(line);
+  group.appendChild(startDot);
+  group.appendChild(endDot);
+  svg.appendChild(group);
+
+  return group;
+}
+
+function redrawMatchedConnections(){
+  const svg = $('matchLines');
+  if(!svg) return;
+
+  syncMatchSvgSize();
+  svg.innerHTML = '';
+
+  matchConnections.forEach(connection => {
+    const letterTile = document.querySelector(
+      `.letter-tile.matched[data-letter="${connection.letter}"]`
+    );
+    const imageTile = document.querySelector(
+      `.image-tile.matched[data-letter="${connection.letter}"]`
+    );
+
+    if(letterTile && imageTile){
+      drawMatchConnection(
+        letterTile,
+        imageTile,
+        '#36c86b',
+        `match-line-${connection.letter}`
+      );
+    }
+  });
+}
+
+function checkMatchingPair(){
+  if(!selectedLetterTile || !selectedImageTile || matchChecking) return;
+
+  matchChecking = true;
+
+  const letterA = selectedLetterTile.dataset.letter;
+  const letterB = selectedImageTile.dataset.letter;
+  const vehicle = VEHICLES.find(v => v.letter === letterA);
+
+  if(letterA === letterB){
+    drawMatchConnection(
+      selectedLetterTile,
+      selectedImageTile,
+      '#36c86b',
+      `match-line-${letterA}`
+    );
+
+    selectedLetterTile.classList.remove('selected');
+    selectedImageTile.classList.remove('selected');
+    selectedLetterTile.classList.add('matched');
+    selectedImageTile.classList.add('matched');
+    selectedLetterTile.disabled = true;
+    selectedImageTile.disabled = true;
+
+    matchConnections.push({letter:letterA});
+
+    requestAnimationFrame(() => {
+      redrawMatchedConnections();
+    });
+
+    setTimeout(redrawMatchedConnections, 120);
+
+    const isNew = !state.collected[letterA];
+    state.collected[letterA] = true;
+    state.combo = (state.combo || 0) + 1;
+
+    const pairCoins = isNew ? 12 : 6;
+    state.coins = (state.coins || 0) + pairCoins;
+    matchedInRound += 1;
+
+    $('matchProgress').textContent =
+      `${matchedInRound} / ${matchRound.length} คู่`;
+
+    $('feedback').textContent =
+      `✅ ${letterA} is for ${vehicle.word}! +${pairCoins} coins`;
+
+    $('speech').textContent =
+      `${letterA} is for ${vehicle.word}. Great job!`;
+
+    speak(`${letterA} is for ${vehicle.word}. Great job!`);
+    rainStars();
+    renderMap();
+    updateStats();
+    checkMysteryBox();
+    save();
+
+    selectedLetterTile = null;
+    selectedImageTile = null;
+    matchChecking = false;
+
+    if(matchedInRound >= matchRound.length){
+      const bonus = 20;
+      state.coins += bonus;
+      save();
+      updateStats();
+
+      $('feedback').textContent =
+        `🎉 จับคู่ครบแล้ว! โบนัส +${bonus} coins`;
+
+      $('speech').textContent =
+        'Round complete! Amazing!';
+
+      speak('Round complete! Amazing!');
+      rainStars();
+
+      setTimeout(() => {
+        if(mode === 'match') newRound();
+      }, 1800);
+    }
+  }else{
+    const wrongLineId = `wrong-line-${Date.now()}`;
+
+    drawMatchConnection(
+      selectedLetterTile,
+      selectedImageTile,
+      '#ff4f5e',
+      wrongLineId
+    );
+
+    selectedLetterTile.classList.add('wrong');
+    selectedImageTile.classList.add('wrong');
+
+    state.combo = 0;
+    save();
+    updateStats();
+
+    $('feedback').textContent =
+      '❌ ยังไม่ตรงกัน เลือกใหม่อีกครั้ง';
+
+    $('speech').textContent =
+      'Not a match. Try again.';
+
+    speak('Not a match. Try again.');
+
+    const wrongLetter = selectedLetterTile;
+    const wrongImage = selectedImageTile;
+
+    setTimeout(() => {
+      document.getElementById(wrongLineId)?.remove();
+
+      wrongLetter.classList.remove('wrong','selected');
+      wrongImage.classList.remove('wrong','selected');
+
+      selectedLetterTile = null;
+      selectedImageTile = null;
+      matchChecking = false;
+
+      $('feedback').textContent =
+        'เลือกตัวอักษรทางซ้าย แล้วเลือกภาพทางขวา';
+    }, 850);
+  }
+}
+
 function speakQuestion(){
+  if(mode === 'match'){
+    speak('Match each letter with the correct vehicle picture.');
+    return;
+  }
   if(!current) return;
   speak(`Hello! Can you find the ${current.word}? Which one is ${current.word}?`);
 }
@@ -694,13 +1370,32 @@ function resetGame(){
   save();
   $('win').style.display = 'none';
   $('boxPopup').style.display = 'none';
+  matchRound = [];
+  selectedLetterTile = null;
+  selectedImageTile = null;
+  matchedInRound = 0;
+  matchChecking = false;
+  matchConnections = [];
   renderMap();
   updateStats();
   newRound();
 }
 
+
+window.addEventListener('resize', () => {
+  if(mode === 'match'){
+    requestAnimationFrame(redrawMatchedConnections);
+  }
+});
+
+window.addEventListener('orientationchange', () => {
+  if(mode === 'match'){
+    setTimeout(redrawMatchedConnections, 180);
+  }
+});
+
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js?v=2').catch(() => {});
+  navigator.serviceWorker.register('./sw.js?v=6').catch(() => {});
 }
 
 init();
